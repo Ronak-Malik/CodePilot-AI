@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 LeetCode Tracker AI
 
-## Getting Started
+An AI-powered automated performance tracking platform that helps developers stay consistent and improve their LeetCode problem-solving journey through weekly reports and smart revision plans.
 
-First, run the development server:
+🌟 What It Does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+LeetCode Tracker AI allows users to:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🔐 Sign in using Google
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+👤 Enter their LeetCode username & notification email
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📊 Access a personalized performance dashboard
 
-## Learn More
+📩 Receive automated weekly performance reports
 
-To learn more about Next.js, take a look at the following resources:
+🤖 Get AI-generated revision plans based on their activity
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The system tracks solved problems, analyzes performance, and sends structured insights directly to the user's inbox — fully automated.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🛠️ Tech Stack
 
-## Deploy on Vercel
+Frontend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Next.js (App Router)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+TypeScript
+
+Tailwind CSS
+
+NextAuth (Google OAuth)
+
+Automation & Backend
+
+n8n (Workflow Automation)
+
+Webhooks
+
+AI-based report generation
+
+PostgreSQL (used within n8n workflows)
+
+Database
+
+MongoDB (User data & profiles)
+
+⚙️ How It Works
+
+User logs in via Google.
+
+Submits LeetCode username & email.
+
+Data is sent to n8n via webhook.
+
+Automated workflow:
+
+Fetches LeetCode stats
+
+Generates AI performance summary
+
+Creates a revision plan
+
+Sends weekly email report
+
+Each user gets their own dedicated dashboard with tracked progress.
