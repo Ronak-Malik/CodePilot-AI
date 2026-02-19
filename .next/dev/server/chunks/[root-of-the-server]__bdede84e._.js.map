@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 88, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/reesh/OneDrive/Desktop/leet-tracker/src/proxy.ts"],"sourcesContent":["import { withAuth } from \"next-auth/middleware\";\r\n\r\nexport default withAuth({\r\n  pages: {\r\n    signIn: \"/\", // redirect to homepage if not logged in\r\n  },\r\n});\r\n\r\nexport const config = {\r\n  matcher: [\"/dashboard\", \"/profile-complete\"],\r\n};\r\n"],"names":[],"mappings":";;;;;;AAAA;;uCAEe,IAAA,sJAAQ,EAAC;IACtB,OAAO;QACL,QAAQ;IACV;AACF;AAEO,MAAM,SAAS;IACpB,SAAS;QAAC;QAAc;KAAoB;AAC9C"}}]
+}

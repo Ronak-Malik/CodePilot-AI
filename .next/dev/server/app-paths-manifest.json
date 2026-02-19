@@ -1,0 +1,9 @@
+{
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/check-username-unique/route": "app/api/check-username-unique/route.js",
+  "/api/leetcode-stats/route": "app/api/leetcode-stats/route.js",
+  "/api/profile-complete/route": "app/api/profile-complete/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/profile-complete/page": "app/profile-complete/page.js"
+}
