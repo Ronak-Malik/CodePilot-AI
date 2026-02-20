@@ -8,7 +8,6 @@ export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  
   useEffect(() => {
     if (status === "loading") return;
 
@@ -22,85 +21,122 @@ export default function HomePage() {
   }, [session, status, router]);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-gray-900 flex flex-col">
+    <div className="min-h-screen bg-[#F5F5F7] text-gray-900">
 
-      
-      <section className="flex flex-col items-center justify-center flex-1 px-6 text-center">
+      {/* HERO */}
+      <section className="px-6 pt-28 pb-20 text-center relative overflow-hidden">
 
-        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight mb-6">
-          <span className="bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100 blur-3xl opacity-50 -z-10" />
+
+        <h1 className="text-6xl sm:text-7xl font-extrabold tracking-tight mb-6">
+          <span className="bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-500 bg-clip-text text-transparent">
             LeetOtracker
           </span>
         </h1>
 
-        <p className="text-xl text-gray-600 max-w-2xl leading-relaxed mb-8">
-          Track your LeetCode performance, receive weekly progress reports,
-          get personalized revision plans, and boost your problem-solving
-          consistency 🚀
+        <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-10">
+          Turn your LeetCode grind into structured growth.
+          Get AI-powered reviews, smart revision plans,
+          and detailed performance analytics.
         </p>
 
         <button
           onClick={() => signIn("google")}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl 
-                     text-lg font-semibold shadow-lg hover:shadow-xl 
-                     transition duration-300 flex items-center gap-3"
+          className="bg-black hover:bg-gray-800 text-white px-10 py-4 
+                     rounded-2xl text-lg font-semibold shadow-xl 
+                     transition-all duration-300"
         >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            className="w-5 h-5 bg-white rounded-full"
-          />
-          Continue with Google
+          Start Tracking 🚀
         </button>
-
-        <p className="text-sm text-gray-500 mt-4">
-          Free to use • No spam • Productivity focused
-        </p>
 
       </section>
 
-     
-      <section className="bg-white py-20 px-6">
+
+      {/* FEATURE GRID */}
+      <section className="px-6 py-20 max-w-7xl mx-auto">
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200">
+            <h3 className="text-xl font-bold mb-3">📊 Problem Breakdown</h3>
+            <p className="text-gray-600">
+              See attempts, accepted solutions, and struggle status.
+              Instantly know where you're stuck.
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200">
+            <h3 className="text-xl font-bold mb-3">📈 Acceptance Analytics</h3>
+            <p className="text-gray-600">
+              Visual acceptance rate tracking with progress bars
+              and performance metrics.
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200">
+            <h3 className="text-xl font-bold mb-3">🧠 AI Review & Revision</h3>
+            <p className="text-gray-600">
+              Personalized AI insights based on your coding
+              strengths and weaknesses.
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200">
+            <h3 className="text-xl font-bold mb-3">📚 Topic Insights</h3>
+            <p className="text-gray-600">
+              Know exactly which topics you’re covering —
+              Arrays, DP, Stack, HashMap and more.
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200">
+            <h3 className="text-xl font-bold mb-3">📬 Weekly Reports</h3>
+            <p className="text-gray-600">
+              Automated performance reports delivered to your inbox.
+              Stay accountable.
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-200">
+            <h3 className="text-xl font-bold mb-3">🚀 Built for Serious Coders</h3>
+            <p className="opacity-90">
+              Stop random solving. Start structured growth.
+              Level up your DSA journey.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* PREVIEW STYLE SECTION */}
+      <section className="px-6 py-24 bg-white">
 
         <div className="max-w-6xl mx-auto text-center mb-14">
-          <h2 className="text-4xl font-bold mb-4">
-            What We Do For You
+          <h2 className="text-4xl font-extrabold mb-4">
+            See Your Growth Clearly
           </h2>
           <p className="text-gray-600 text-lg">
-            Designed for serious coders who want structured improvement.
+            Beautiful dashboards. Clear analytics. AI guidance.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
 
-          <div className="bg-[#f1f5f9] p-8 rounded-2xl shadow-sm hover:shadow-md transition">
-            <h3 className="text-xl font-semibold mb-3">
-              📊 Performance Tracking
-            </h3>
+          <div className="bg-[#F5F5F7] p-10 rounded-3xl border border-gray-200 shadow-sm">
+            <h4 className="font-bold text-lg mb-3">📊 Performance Summary</h4>
             <p className="text-gray-600">
-              Track Easy, Medium, Hard breakdown, ranking, streaks, and
-              total solved problems in one beautiful dashboard.
+              Easy, Medium, Hard breakdown with structured reports
+              and acceptance tracking.
             </p>
           </div>
 
-          <div className="bg-[#f1f5f9] p-8 rounded-2xl shadow-sm hover:shadow-md transition">
-            <h3 className="text-xl font-semibold mb-3">
-              📬 Weekly Email Reports
-            </h3>
+          <div className="bg-[#F5F5F7] p-10 rounded-3xl border border-gray-200 shadow-sm">
+            <h4 className="font-bold text-lg mb-3">🧠 AI Powered Plan</h4>
             <p className="text-gray-600">
-              Get automated weekly performance summaries directly to your
-              inbox with insights and improvement suggestions.
-            </p>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="bg-[#f1f5f9] p-8 rounded-2xl shadow-sm hover:shadow-md transition">
-            <h3 className="text-xl font-semibold mb-3">
-              🧠 Smart Revision Plans
-            </h3>
-            <p className="text-gray-600">
-              Receive structured revision plans based on your weak areas
-              to improve faster and stay consistent.
+              Strong areas. Weak areas. Actionable next steps.
+              No guesswork.
             </p>
           </div>
 
@@ -108,8 +144,27 @@ export default function HomePage() {
 
       </section>
 
-     
-      <footer className="text-center py-6 text-gray-500 text-sm">
+
+      {/* FINAL CTA */}
+      <section className="px-6 py-20 text-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+
+        <h2 className="text-4xl font-extrabold mb-6">
+          Ready to Upgrade Your Coding Journey?
+        </h2>
+
+        <button
+          onClick={() => signIn("google")}
+          className="bg-white text-black px-10 py-4 
+                     rounded-2xl text-lg font-semibold 
+                     shadow-xl hover:scale-105 transition"
+        >
+          Join LeetOtracker
+        </button>
+
+      </section>
+
+
+      <footer className="text-center py-8 text-gray-500 text-sm bg-[#F5F5F7]">
         © {new Date().getFullYear()} LeetOtracker • Built for ambitious developers 🚀
       </footer>
 
