@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 LeetCode Tracker AI
 
-## Getting Started
+An AI-powered automated performance tracking platform that helps developers stay consistent and improve their LeetCode problem-solving journey through weekly reports and smart revision plans.
 
-First, run the development server:
+⚙️ How user can used our applicatioon ?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Login with google 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. complete thier profile for leetotracker dashboard
+   *enter their leetcode username
+   *and notification email on which they want update 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. they redirect to their personal leetotracker dashboard
+ 
+4. now their work complete and they get their weekly report on their mentioned notification mail
+   with a perfect revision plan and much more which enhance their productivity .
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+🌟 What LeetOtracker Does
 
-To learn more about Next.js, take a look at the following resources:
+LeetCode Tracker AI allows users to:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🔐 Sign in using Google
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+👤 Enter their LeetCode username & notification email(on which they want their performance report every week)
 
-## Deploy on Vercel
+📊 Access a personalized performance dashboard(every user have their own personal leetotracker dashboard where they can see their leetcode stats)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+📩 Receive automated weekly performance reports(with problem breakdown , to-do plans , revision plan and more )
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🤖 Get AI-generated revision plans based on their activity
+
+The system tracks solved problems, analyzes performance, and sends structured insights directly to the user's inbox — fully automated.
+
+🛠️ Tech Stack
+
+Frontend--
+
+1.Next.js (App Router)
+
+2.TypeScript
+
+3.Tailwind CSS
+
+4.NextAuth (Google OAuth)
+
+& Backend --
+
+1.Next js 
+
+2.Typescript
+
+Automation --
+
+1.n8n (Workflow Automation)
+
+2.Webhooks
+
+3.AI-based report generation
+
+4.PostgreSQL (used within n8n workflows)
+
+Database--
+
+1.MongoDB (User data & profiles)
+2. postgreSQL for storing leetcode username and notificaton email for n8n
+
