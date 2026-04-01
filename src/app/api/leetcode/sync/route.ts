@@ -5,7 +5,7 @@ import { verifyJWT } from "@/src/lib/jwt";
 
 export async function POST(req: NextRequest) {
   try {
-    // Get token from cookies
+   
     const token = req.cookies.get("auth_token")?.value;
 
     if (!token) {
@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify token
     const decoded = await verifyJWT(token);
     if (!decoded || !decoded.userId) {
       return NextResponse.json(
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fetch fresh stats from LeetCode
+    
     const response = await fetch("https://leetcode.com/graphql", {
       method: "POST",
       headers: {
@@ -81,7 +80,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Parse stats
+   
     const stats = matchedUser.submitStats.acSubmissionNum;
     const totalSolved =
       stats.find((s: any) => s.difficulty === "All")?.count || 0;
@@ -137,7 +136,7 @@ export async function POST(req: NextRequest) {
       recentProblems: recentProblems.slice(0, 10),
     };
 
-    // Save to database
+    
     await UserModel.findByIdAndUpdate(
   decoded.userId,
   { leetcodeStats },

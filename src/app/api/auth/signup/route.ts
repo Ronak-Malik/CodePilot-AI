@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     const { email, password, name, leetcodeUsername, notifyMail } = result.data;
 
-    // Check if user already exists
+    
     const existingUser = await UserModel.findOne({ 
       $or: [
         { email: email.toLowerCase() },
@@ -49,10 +49,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user (all fields collected at signup)
     const user = await UserModel.create({
       email: email.toLowerCase(),
       password: hashedPassword,

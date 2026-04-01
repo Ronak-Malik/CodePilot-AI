@@ -5,7 +5,7 @@ import { verifyJWT } from "@/src/lib/jwt";
 
 export async function GET(req: NextRequest) {
   try {
-    // Get token from cookies
+   
     const token = req.cookies.get("auth_token")?.value;
 
     if (!token) {
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Verify token
+    
     const decoded = await verifyJWT(token);
     if (!decoded || !decoded.userId) {
       return NextResponse.json(
@@ -35,13 +35,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if we have recent stats (less than 1 hour old)
+   
     const hasRecentStats = user.leetcodeStats && 
       user.leetcodeStats.lastUpdated && 
       (new Date().getTime() - new Date(user.leetcodeStats.lastUpdated).getTime()) < 60 * 60 * 1000;
 
     if (hasRecentStats) {
-      // Return cached stats
+    
       return NextResponse.json({
         success: true,
         data: user.leetcodeStats,
@@ -49,7 +49,6 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Fetch fresh stats from LeetCode
     const response = await fetch("https://leetcode.com/graphql", {
       method: "POST",
       headers: { 
@@ -95,14 +94,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Parse stats
     const stats = matchedUser.submitStats.acSubmissionNum;
     const totalSolved = stats.find((s: any) => s.difficulty === "All")?.count || 0;
     const easy = stats.find((s: any) => s.difficulty === "Easy")?.count || 0;
     const medium = stats.find((s: any) => s.difficulty === "Medium")?.count || 0;
     const hard = stats.find((s: any) => s.difficulty === "Hard")?.count || 0;
 
-    // Calculate streak from calendar
+  
     const calendarRaw = matchedUser.submissionCalendar;
     let currentStreak = 0;
 
@@ -127,7 +125,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Get recent solved problems
+    
     const recentProblems = (data?.data?.recentAcSubmissionList || []).map((sub: any) => ({
       title: sub.title,
       titleSlug: sub.titleSlug,
@@ -135,7 +133,6 @@ export async function GET(req: NextRequest) {
       solvedAt: new Date(parseInt(sub.timestamp) * 1000),
     }));
 
-    // Prepare stats object
     const leetcodeStats = {
       username: matchedUser.username,
       totalSolved,
@@ -148,11 +145,11 @@ export async function GET(req: NextRequest) {
       recentProblems: recentProblems.slice(0, 10),
     };
 
-    // Save to database - fix deprecated warning
+   
     await UserModel.findByIdAndUpdate(
       decoded.userId,
       { leetcodeStats },
-      { returnDocument: 'after' } // Use returnDocument instead of new
+      { returnDocument: 'after' } 
     );
 
     return NextResponse.json({

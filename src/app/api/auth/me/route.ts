@@ -5,7 +5,7 @@ import UserModel from "@/src/models/user.model";
 
 export async function GET(request: NextRequest) {
   try {
-    // Get token from cookies
+    
     const token = request.cookies.get("auth_token")?.value;
 
     if (!token) {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verify token
+    
     const decoded = await verifyJWT(token);
     if (!decoded || !decoded.userId) {
       return NextResponse.json(
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get user from database
+    
     await dbConnect();
     const user = await UserModel.findById(decoded.userId).select("-password");
 
