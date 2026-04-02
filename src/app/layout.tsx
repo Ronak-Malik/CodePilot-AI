@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ChatWrapper from "../components/ChatWrapper"
 
 export const metadata: Metadata = {
   title: "LeetOTracker",
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="antialiased">
+        {children}
+        {/* The Chatbot logic is now global */}
+        <ChatWrapper /> 
+      </body>
     </html>
   );
 }

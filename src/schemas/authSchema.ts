@@ -9,20 +9,10 @@ export const signupSchema = z.object({
   leetcodeUsername: z.string()
     .min(1, "LeetCode username is required")
     .max(50, "LeetCode username is too long")
-    .regex(/^[a-zA-Z0-9_]+$/, "LeetCode username can only contain letters, numbers, and underscores"),
-  notifyMail: z.string()
-    .email("Invalid notification email address"),
+    .regex(/^[a-zA-Z0-9_-]+$/, "LeetCode username can only contain letters, numbers, hyphens, and underscores"),
 });
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
-});
-
-export const updateProfileSchema = z.object({
-  leetcodeUsername: z.string()
-    .min(1, "LeetCode username is required")
-    .max(50, "LeetCode username is too long"),
-  notifyMail: z.string()
-    .email("Invalid notification email address"),
 });

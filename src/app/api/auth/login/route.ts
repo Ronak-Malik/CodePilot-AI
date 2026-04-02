@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = result.data;
 
-    // Find user by email
     const user = await UserModel.findOne({ email: email.toLowerCase() });
 
     if (!user) {
@@ -34,7 +33,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify password
+  
     const isPasswordValid = await bcrypt.compare(password, user.password);
     
     if (!isPasswordValid) {
@@ -44,13 +43,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate JWT token
     const token = await signJWT({
       userId: user._id.toString(),
       email: user.email,
     });
 
-    // Create response with token in HTTP-only cookie
+   
     const response = NextResponse.json({
       success: true,
       message: "Login successful",
@@ -63,7 +61,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Set cookie
+   
     response.cookies.set({
       name: "auth_token",
       value: token,

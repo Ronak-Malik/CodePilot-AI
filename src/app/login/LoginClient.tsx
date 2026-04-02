@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -38,115 +37,107 @@ export default function LoginClient() {
       });
 
       if (response.data.success) {
-        const callbackUrl =
-          searchParams.get("callbackUrl") || "/dashboard";
+        const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
         router.push(callbackUrl);
         router.refresh();
       }
     } catch (error: any) {
-      console.error("Login error:", error.response?.data);
-      setError(
-        error.response?.data?.message ||
-          "Login failed. Please try again."
-      );
+      setError(error.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
-        <div className="text-center">
-          <div className="text-5xl mb-4">🚀</div>
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Welcome Back
-          </h2>
-          <p className="mt-2 text-gray-600">
-            Sign in to your LeetOTracker account
-          </p>
+    <div className="min-h-screen bg-[#020203] text-zinc-100 flex items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-indigo-500/30">
+      
+     
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[600px] bg-indigo-600/10 blur-[140px] rounded-full pointer-events-none animate-pulse" />
+
+      <div className="max-w-md w-full z-10 transition-all duration-700">
+        
+        
+        <div className="text-center mb-8 transform hover:scale-110 transition-transform duration-500 cursor-default">
+          <h1 className="text-3xl font-black tracking-tighter  mb-2 text-white">LeetOtracker</h1>
+          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.3em]">Access Your Pipeline</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {successMessage && (
-            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
-              {successMessage}
-            </div>
-          )}
+        <div className="bg-zinc-900/40 border border-white/10 backdrop-blur-2xl p-8 rounded-[2.5rem] shadow-2xl hover:scale-[1.02] hover:border-indigo-500/30 transition-all duration-500">
+          
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {successMessage && (
+              <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-xl text-[10px] font-black uppercase text-center">
+                {successMessage}
+              </div>
+            )}
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 text-red-300 p-3 rounded-xl text-[10px] font-black uppercase text-center animate-bounce">
+                {error}
+              </div>
+            )}
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
+            <div className="space-y-5">
+              {/* Email Address */}
+              <div className="group transition-all">
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400 transition-colors">
+                  Email Address
+                </label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition pr-10"
-                  placeholder="••••••••"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700"
+                  placeholder="name@example.com"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
+              </div>
+
+              {/* Password */}
+              <div className="group transition-all">
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400 transition-colors">
+                  Secret Key
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700 pr-11"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-blue-600 transition disabled:opacity-50"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
+            {/* REACTIVE LOGIN BUTTON */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-[0.25em] hover:scale-[1.03] active:scale-95 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all duration-300 disabled:opacity-50"
+            >
+              {loading ? "Authorizing..." : "Initiate Session"}
+            </button>
+          </form>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link
-                href="/signup"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Sign up
+          {/* LIGHTER FOOTER TEXT */}
+          <div className="mt-8 text-center pt-6 border-t border-white/5">
+            <p className="text-xs text-zinc-400 font-bold uppercase tracking-tight">
+              New to the system?{" "}
+              <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 hover:underline transition ml-1 underline-offset-4">
+                Sign up here
               </Link>
             </p>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

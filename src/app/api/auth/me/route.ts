@@ -5,7 +5,6 @@ import UserModel from "@/src/models/user.model";
 
 export async function GET(request: NextRequest) {
   try {
-    
     const token = request.cookies.get("auth_token")?.value;
 
     if (!token) {
@@ -15,7 +14,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    
     const decoded = await verifyJWT(token);
     if (!decoded || !decoded.userId) {
       return NextResponse.json(
@@ -24,7 +22,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    
     await dbConnect();
     const user = await UserModel.findById(decoded.userId).select("-password");
 
@@ -42,7 +39,6 @@ export async function GET(request: NextRequest) {
         email: user.email,
         name: user.name,
         leetcodeUsername: user.leetcodeUsername,
-        notifyMail: user.notifyMail,
       },
     });
 

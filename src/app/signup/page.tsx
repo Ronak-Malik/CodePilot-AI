@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -14,7 +13,6 @@ export default function SignupPage() {
     confirmPassword: "",
     name: "",
     leetcodeUsername: "",
-    notifyMail: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,7 +21,6 @@ export default function SignupPage() {
   const [debouncedUsername, setDebouncedUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
 
-  // Debounce username
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedUsername(formData.leetcodeUsername.trim().toLowerCase());
@@ -31,254 +28,189 @@ export default function SignupPage() {
     return () => clearTimeout(timer);
   }, [formData.leetcodeUsername]);
 
-  // Check username availability
   useEffect(() => {
     if (!debouncedUsername) {
       setUsernameStatus("idle");
       return;
     }
-
     const checkUsername = async () => {
       try {
         setUsernameStatus("checking");
         const res = await axios.get("/api/check-username-unique", {
           params: { leetcodeUsername: debouncedUsername },
         });
-        if (res.data.success) {
-          setUsernameStatus("available");
-        } else {
-          setUsernameStatus("taken");
-        }
+        setUsernameStatus(res.data.success ? "available" : "taken");
       } catch {
         setUsernameStatus("idle");
       }
     };
-
     checkUsername();
   }, [debouncedUsername]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (fieldErrors[name]) {
-      setFieldErrors(prev => ({ ...prev, [name]: "" }));
-    }
+    if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
-
-    if (!formData.email) errors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Email is invalid";
-
-    if (!formData.password) errors.password = "Password is required";
-    else if (formData.password.length < 6) errors.password = "Password must be at least 6 characters";
-
-    if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match";
-    }
-
-    if (!formData.leetcodeUsername) errors.leetcodeUsername = "LeetCode username is required";
-    else if (!/^[a-zA-Z0-9_]+$/.test(formData.leetcodeUsername)) {
-      errors.leetcodeUsername = "Only letters, numbers, and underscores allowed";
-    }
-    else if (usernameStatus !== "available") {
-      errors.leetcodeUsername = "Username not available";
-    }
-
-    if (formData.notifyMail && !/\S+@\S+\.\S+/.test(formData.notifyMail)) {
-      errors.notifyMail = "Invalid email address";
-    }
-
+    if (!formData.email) errors.email = "Required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Invalid";
+    if (formData.password.length < 6) errors.password = "Min 6 chars";
+    if (formData.password !== formData.confirmPassword) errors.confirmPassword = "No match";
+    if (!formData.leetcodeUsername) errors.leetcodeUsername = "Required";
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
     if (!validateForm()) return;
-
     setLoading(true);
-
     try {
-      const response = await axios.post("/api/auth/signup", {
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-        leetcodeUsername: formData.leetcodeUsername,
-        notifyMail: formData.notifyMail || formData.email,
-      });
-
-      if (response.data.success) {
-        router.push("/login?registered=true");
-      }
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Signup failed. Please try again.");
+      const response = await axios.post("/api/auth/signup", formData);
+      if (response.data.success) router.push("/login?registered=true");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
-        <div className="text-center">
-          <div className="text-5xl mb-4">🚀</div>
-          <h2 className="text-3xl font-extrabold text-gray-900">Create Account</h2>
-          <p className="mt-2 text-gray-600">Start tracking your LeetCode journey</p>
+    <div className="min-h-screen bg-[#020203] text-zinc-100 flex items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-indigo-500/30">
+      
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[600px] bg-indigo-600/10 blur-[140px] rounded-full pointer-events-none animate-pulse" />
+
+      <div className="max-w-md w-full z-10 transition-all duration-700">
+        
+        <div className="text-center mb-8 transform hover:scale-110 transition-transform duration-500 cursor-default">
+          <h1 className="text-3xl font-black tracking-tighter  mb-2 text-white">LeetOtracker</h1>
+          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.3em]">The Intelligent Pipeline</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address *
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition`}
-                placeholder="you@example.com"
-              />
-              {fieldErrors.email && (
-                <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password *
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border ${fieldErrors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition pr-10`}
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                </button>
+        <div className="bg-zinc-900/40 border border-white/10 backdrop-blur-2xl p-8 rounded-[2.5rem] shadow-2xl hover:scale-[1.02] hover:border-indigo-500/30 transition-all duration-500">
+          
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 text-red-300 p-3 rounded-xl text-[10px] font-black uppercase text-center animate-bounce">
+                {error}
               </div>
-              {fieldErrors.password && (
-                <p className="mt-1 text-xs text-red-600">{fieldErrors.password}</p>
-              )}
-              <p className="mt-1 text-xs text-gray-500">Minimum 6 characters</p>
+            )}
+
+            <div className="grid grid-cols-1 gap-5">
+              
+              <div className="group transition-all">
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400 transition-colors">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700"
+                  placeholder="Enter your name"
+                />
+              </div>
+
+              <div className="group transition-all">
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full bg-black/50 border ${fieldErrors.email ? 'border-red-500/50' : 'border-white/10'} rounded-xl px-4 py-3 text-sm focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700`}
+                  placeholder="name@example.com"
+                />
+                <p className="mt-2 ml-1 text-[9px] font-bold text-indigo-400/80  tracking-wider animate-pulse">
+                   Automated insights will be sent here.
+                </p>
+              </div>
+
+              <div className="group transition-all">
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400">
+                  LeetCode ID
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="leetcodeUsername"
+                    value={formData.leetcodeUsername}
+                    onChange={handleChange}
+                    className={`w-full bg-black/50 border ${
+                      usernameStatus === "available" ? 'border-green-500/40' : 
+                      usernameStatus === "taken" ? 'border-red-500/40' : 'border-white/10'
+                    } rounded-xl px-4 py-3 text-sm focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700`}
+                    placeholder="leetcode_username"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    {usernameStatus === "checking" && <div className="h-3 w-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />}
+                    {usernameStatus === "available" && <span className="text-green-400 text-xs font-bold animate-pulse">✓</span>}
+                    {usernameStatus === "taken" && <span className="text-red-400 text-xs font-bold">✗</span>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="group transition-all">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block">Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-indigo-500/50 outline-none transition-all placeholder:text-zinc-700"
+                      placeholder="••••••"
+                    />
+                  </div>
+                </div>
+                <div className="group transition-all">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block">Confirm</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-indigo-500/50 outline-none transition-all placeholder:text-zinc-700"
+                      placeholder="••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password *
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border ${fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition`}
-                placeholder="••••••••"
-              />
-              {fieldErrors.confirmPassword && (
-                <p className="mt-1 text-xs text-red-600">{fieldErrors.confirmPassword}</p>
-              )}
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-[0.25em] hover:scale-[1.03] active:scale-95 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all duration-300 disabled:opacity-50 mt-4"
+            >
+              {loading ? "Initializing..." : "Create Account"}
+            </button>
+          </form>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                LeetCode Username *
-              </label>
-              <input
-                type="text"
-                name="leetcodeUsername"
-                value={formData.leetcodeUsername}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border ${
-                  usernameStatus === "available" ? 'border-green-500' : 
-                  usernameStatus === "taken" ? 'border-red-500' : 
-                  fieldErrors.leetcodeUsername ? 'border-red-500' : 'border-gray-300'
-                } rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition`}
-                placeholder="your_leetcode_username"
-              />
-              {usernameStatus === "checking" && (
-                <p className="mt-1 text-xs text-blue-500">Checking availability...</p>
-              )}
-              {usernameStatus === "available" && (
-                <p className="mt-1 text-xs text-green-500">✓ Username available</p>
-              )}
-              {usernameStatus === "taken" && (
-                <p className="mt-1 text-xs text-red-500">✗ Username already taken</p>
-              )}
-              {fieldErrors.leetcodeUsername && (
-                <p className="mt-1 text-xs text-red-600">{fieldErrors.leetcodeUsername}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Notification Email
-              </label>
-              <input
-                type="email"
-                name="notifyMail"
-                value={formData.notifyMail}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border ${fieldErrors.notifyMail ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition`}
-                placeholder="notifications@example.com"
-              />
-              {fieldErrors.notifyMail && (
-                <p className="mt-1 text-xs text-red-600">{fieldErrors.notifyMail}</p>
-              )}
-              <p className="mt-1 text-xs text-gray-500">Weekly reports will be sent here (optional)</p>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-blue-600 transition disabled:opacity-50"
-          >
-            {loading ? "Creating Account..." : "Sign Up"}
-          </button>
-
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Sign in
+          <div className="mt-8 text-center pt-6 border-t border-white/5">
+            <p className="text-xs text-zinc-400 font-bold uppercase tracking-tight">
+              Already optimized?{" "}
+              <Link href="/login" className="text-indigo-400 hover:text-indigo-300 hover:underline transition ml-1 underline-offset-4">
+                Sign in here
               </Link>
             </p>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

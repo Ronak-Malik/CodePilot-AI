@@ -6,7 +6,6 @@ export interface IUser {
   password: string;
   name?: string;
   leetcodeUsername: string;
-  notifyMail: string;
   leetcodeStats?: {
     totalSolved: number;
     easy: number;
@@ -47,16 +46,13 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "LeetCode username is required"],
       unique: true,
-      trim: true,
-      lowercase: true,
+      sparse: true,
+  
+       
+    
     },
-    notifyMail: {
-      type: String,
-      required: [true, "Notification email is required"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
+   
+   
     leetcodeStats: {
       type: {
         totalSolved: Number,

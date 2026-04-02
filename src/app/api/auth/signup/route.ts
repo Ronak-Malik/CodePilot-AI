@@ -13,51 +13,62 @@ export async function POST(req: NextRequest) {
 
     if (!result.success) {
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           message: result.error.issues[0].message,
-          errors: result.error.issues 
+          errors: result.error.issues,
         },
         { status: 400 }
       );
     }
 
-    const { email, password, name, leetcodeUsername, notifyMail } = result.data;
+    const emailNormalized = result.data.email.trim().toLowerCase();
+    const leetcodeNormalized = result.data.leetcodeUsername
+      ?.trim()
+      .toLowerCase();
 
-    
-    const existingUser = await UserModel.findOne({ 
+    const { password, name } = result.data;
+
+   
+    const existingUser = await UserModel.findOne({
       $or: [
-        { email: email.toLowerCase() },
-        { leetcodeUsername: leetcodeUsername.toLowerCase() },
-        { notifyMail: notifyMail.toLowerCase() }
-      ]
+        { email: emailNormalized },
+        ...(leetcodeNormalized
+          ? [{ leetcodeUsername: leetcodeNormalized }]
+          : []),
+      ],
     });
 
     if (existingUser) {
-      let errorMessage = "";
-      if (existingUser.email === email.toLowerCase()) {
+      let errorMessage = "User already exists";
+
+      if (existingUser.email === emailNormalized) {
         errorMessage = "Email already registered. Please login.";
-      } else if (existingUser.leetcodeUsername === leetcodeUsername.toLowerCase()) {
-        errorMessage = "LeetCode username already in use. Please choose another.";
-      } else if (existingUser.notifyMail === notifyMail.toLowerCase()) {
-        errorMessage = "Notification email already in use. Please use another.";
+      } else if (
+        leetcodeNormalized &&
+        existingUser.leetcodeUsername?.toLowerCase() ===
+          leetcodeNormalized
+      ) {
+        errorMessage =
+          "LeetCode username already in use. Please choose another.";
       }
-      
+
       return NextResponse.json(
         { success: false, message: errorMessage },
         { status: 400 }
       );
     }
 
-    
+  
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    
     const user = await UserModel.create({
-      email: email.toLowerCase(),
+      email: emailNormalized,
       password: hashedPassword,
-      name: name || email.split('@')[0],
-      leetcodeUsername: leetcodeUsername.toLowerCase(),
-      notifyMail: notifyMail.toLowerCase(),
+      name: name || emailNormalized.split("@")[0],
+      leetcodeUsername: leetcodeNormalized,
+      notifyMail: emailNormalized, // 🔥 FIX your previous error also
     });
 
     return NextResponse.json({
@@ -67,16 +78,22 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Signup Error:", error);
-    
+
     if (error.code === 11000) {
       return NextResponse.json(
-        { success: false, message: "Email, LeetCode username, or notification email already exists" },
+        {
+          success: false,
+          message: "Email or LeetCode username already exists",
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { success: false, message: "Server error. Please try again later." },
+      {
+        success: false,
+        message: "Server error. Please try again later.",
+      },
       { status: 500 }
     );
   }
