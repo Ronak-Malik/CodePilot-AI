@@ -5,6 +5,7 @@ Leet'O Tracker is a full-stack developer growth platform that automatically trac
 Unlike generic AI chatbots that provide broad advice, LeetX analyzes each user's actual LeetCode performance and delivers personalized guidance, revision plans, and interview coaching based on real coding activity.
 
 🌐Live - https://leetotracker.vercel.app/
+LeetX repo - https://github.com/Ronak-Malik/leetX ( multi-AI agent chatbot )
 
 ---
 
