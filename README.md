@@ -1,4 +1,4 @@
-# 🚀 Leet'O Tracker + LeetX AI Mentor
+# 🚀CodePilot-AI ( Leetcode Tracker + LeetX AI Mentor )
 
 Leet'O Tracker is a full-stack developer growth platform that automatically tracks LeetCode activity, generates AI-powered performance reports, and provides personalized interview preparation through **LeetX**, a context-aware multi-agent AI mentor.
 
