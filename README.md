@@ -1,175 +1,308 @@
-# 🚀 LeetX – AI-Powered LeetCode Performance Tracker & Multi-Agent DSA Mentor
+# 🚀 Leet'O Tracker + LeetX AI Mentor
 
-LeetX is a full-stack developer growth platform that tracks LeetCode activity, analyzes coding performance, automates progress reporting, and provides personalized DSA mentorship through a LangGraph-powered Multi-Agent AI system.
+Leet'O Tracker is a full-stack developer growth platform that automatically tracks LeetCode activity, generates AI-powered performance reports, and provides personalized interview preparation through **LeetX**, a context-aware multi-agent AI mentor.
 
-The platform combines real-time LeetCode analytics, workflow automation, and Agentic AI to help developers improve problem-solving skills, prepare for coding interviews, and maintain consistent learning habits.
+Unlike generic AI chatbots that provide broad advice, LeetX analyzes each user's actual LeetCode performance and delivers personalized guidance, revision plans, and interview coaching based on real coding activity.
 
-🌐 **Live Demo:** https://leetotracker.vercel.app/
-
----
-
-# ✨ Features
-
-### 🔐 Custom Authentication System
-
-* User Signup & Login functionality.
-* Secure credential-based authentication.
-* Protected user dashboard and AI mentor access.
-* Session management and user-specific data handling.
-
-### 📊 LeetCode Performance Tracking
-
-* Track coding activity and submission statistics.
-* Monitor problem-solving consistency.
-* View personalized analytics dashboard.
-* Compare current performance with historical trends.
-
-### 🤖 Multi-Agent AI Mentor
-
-LeetX includes a LangGraph-powered AI mentorship system that dynamically routes user requests to specialized agents.
-
-#### 🎯 Interview Agent
-
-* Conducts mock DSA interviews.
-* Generates coding interview questions.
-* Evaluates user responses.
-* Provides scoring and detailed feedback.
-
-#### 📚 Revision Agent
-
-* Creates personalized revision roadmaps.
-* Recommends topics based on weak areas.
-* Generates structured study plans.
-* Adapts recommendations using LeetCode performance data.
-
-### 🧠 Intelligent Agent Routing
-
-* Intent detection using a Supervisor Agent.
-* Dynamic routing between AI agents.
-* Shared workflow state across nodes.
-* Context-aware conversations and recommendations.
-
-### 📧 Automated Weekly Reports
-
-* AI-generated performance summaries.
-* Weekly progress analysis.
-* Historical performance comparison.
-* Automated email delivery.
+🌐Live - https://leetotracker.vercel.app/
 
 ---
 
-# 🏗️ Multi-Agent Architecture
+# 🌟 Key Features
+
+## 📊 LeetCode Performance Tracking
+
+* Connect your LeetCode username.
+* Automatically track coding activity and submissions.
+* Store user-specific performance history.
+* Monitor consistency and progress over time.
+* Visual dashboard for coding analytics.
+
+## 🔐 User Authentication
+
+* Custom Signup & Login System.
+* Secure user account management.
+* Protected dashboard and AI mentor access.
+* User-specific performance tracking.
+
+## ⚙️ Automated Weekly Analysis
+
+Users only need to submit their LeetCode username once.
+
+The platform automatically:
+
+* Retrieves LeetCode data using GraphQL APIs.
+* Stores performance history in the database.
+* Runs scheduled n8n workflows.
+* Compares current performance with previous weeks.
+* Generates AI-powered insights.
+* Delivers structured performance reports.
+
+---
+
+# 🤖 LeetX – Multi-Agent AI Mentor
+
+LeetX is a LangGraph-powered Multi-Agent AI system that acts as a personalized DSA mentor.
+
+Unlike traditional LLM chatbots that generate generic responses, LeetX uses the user's actual LeetCode performance data as context.
+
+This allows the system to generate:
+
+* Personalized revision plans
+* Interview preparation guidance
+* Topic recommendations
+* Performance-based feedback
+
+---
+
+# 🧠 Why LeetX is Different
+
+### Generic AI Chatbots
+
+```text
+User → LLM → Generic Advice
+```
+
+The model has no knowledge of:
+
+* Problems solved
+* Acceptance rate
+* Weak topics
+* Coding consistency
+* Historical progress
+
+---
+
+### LeetX AI Mentor
+
+```text
+User Stats
+     │
+     ▼
+Database Context
+     │
+     ▼
+Multi-Agent Workflow
+     │
+     ▼
+Personalized Guidance
+```
+
+LeetX knows:
+
+* Total problems solved
+* Easy / Medium / Hard distribution
+* Topic-wise strengths
+* Weak areas
+* Acceptance rate
+* Historical coding trends
+
+This allows it to provide highly personalized recommendations instead of generic interview advice.
+
+---
+
+# 🏗️ System Architecture
+
+```text
+User
+ │
+ ▼
+Submit LeetCode Username
+ │
+ ▼
+Store User Information
+ │
+ ▼
+LeetCode GraphQL API
+ │
+ ▼
+MongoDB Database
+ │
+ ▼
+n8n Workflow Automation
+ │
+ ├── Fetch Weekly Statistics
+ │
+ ├── Compare Historical Data
+ │
+ ├── Generate AI Insights
+ │
+ └── Send Email Reports
+ │
+ ▼
+LeetX Multi-Agent AI Mentor
+ │
+ ▼
+Personalized Interview & Revision Guidance
+```
+
+---
+
+# ⚡ n8n Automation Workflow
+
+The entire reporting pipeline is automated using n8n.
+
+### Weekly Workflow
+
+#### Step 1
+
+Fetch user data from database.
+
+#### Step 2
+
+Retrieve latest LeetCode statistics.
+
+#### Step 3
+
+Analyze:
+
+* Problems solved
+* Acceptance rate
+* Difficulty distribution
+* Topic coverage
+
+#### Step 4
+
+Compare with previous performance.
+
+#### Step 5
+
+Generate AI review and revision plan.
+
+#### Step 6
+
+Create structured reports.
+
+#### Step 7
+
+Send personalized email summaries.
+
+---
+
+# 📈 AI Generated Reports
+
+Every report contains:
+
+### Performance Summary
+
+* Problems solved
+* Acceptance rate
+* Overall progress
+
+### Topic Analysis
+
+* Strong topics
+* Weak topics
+* Topic coverage breakdown
+
+### Improvement Areas
+
+* Missing concepts
+* Lack of hard problem exposure
+* Skill gaps
+
+### Revision Plan
+
+* Recommended topics
+* Weekly goals
+* Personalized practice suggestions
+
+### Problem Breakdown
+
+* Individual problem analysis
+* Attempts vs Accepted
+* Performance trends
+
+---
+
+# 🤖 LeetX Multi-Agent Architecture
+
+Built using LangGraph for stateful agent orchestration.
+
+## Database Node
+
+Responsible for:
+
+* Fetching user-specific LeetCode statistics.
+* Loading historical performance data.
+* Providing context to downstream agents.
+
+## Supervisor Node
+
+Responsible for:
+
+* Intent detection.
+* Workflow routing.
+* Agent selection.
+* Decision making.
+
+## Interview Agent
+
+Responsible for:
+
+* Mock interview sessions.
+* DSA interview questions.
+* Answer evaluation.
+* Personalized interview feedback.
+
+## Revision Agent
+
+Responsible for:
+
+* Revision roadmap generation.
+* Weak topic identification.
+* Personalized study plans.
+* Improvement recommendations.
+
+---
+
+# 🔄 LangGraph Workflow
 
 ```text
 User Query
       │
       ▼
 Database Node
-(Fetch User Stats)
+(Fetch User Context)
       │
       ▼
 Supervisor Node
 (Intent Detection)
       │
- ┌────┴─────┐
+ ┌────┴────┐
+ │         │
+ ▼         ▼
+Interview  Revision
+Agent      Agent
  │          │
- ▼          ▼
-Interview   Revision
-Agent       Agent
- │           │
- └─────┬─────┘
-       ▼
-AI Response
-       │
-       ▼
-Frontend Chat Interface
+ └────┬─────┘
+      ▼
+Personalized Response
 ```
 
 ---
 
-# 🤖 AI Workflow
+# 🎯 Engineering Highlights
 
-## Database Node
-
-* Fetches user-specific LeetCode statistics.
-* Retrieves historical performance data.
-* Provides context to downstream agents.
-
-## Supervisor Node
-
-* Detects user intent.
-* Decides which agent should handle the request.
-* Manages workflow execution.
-
-## Interview Agent Node
-
-* Generates interview questions.
-* Evaluates responses.
-* Provides scoring and feedback.
-* Simulates real technical interviews.
-
-## Revision Agent Node
-
-* Creates revision plans.
-* Identifies weak topics.
-* Generates personalized study recommendations.
+* Built a full-stack LeetCode tracking platform.
+* Developed automated reporting workflows using n8n.
+* Integrated LeetCode GraphQL APIs.
+* Created a LangGraph-based Multi-Agent AI Mentor.
+* Implemented dynamic agent routing using a Supervisor Agent.
+* Built context-aware interview and revision agents.
+* Generated AI-powered weekly performance reports.
+* Designed personalized learning recommendations using real user data.
 
 ---
 
-# ⚡ LangGraph Features
-
-* Stateful Agent Workflows
-* Conditional Edge Routing
-* Shared State Management
-* Context Persistence
-* Dynamic Agent Selection
-* Multi-Agent Coordination
-* Graph-Based Workflow Execution
-
----
-
-# 🔄 Automation Pipeline
-
-```text
-LeetCode Data
-      │
-      ▼
-MongoDB Storage
-      │
-      ▼
-n8n Workflow
-      │
-      ▼
-AI Analysis
-      │
-      ▼
-Report Generation
-      │
-      ▼
-PostgreSQL Storage
-      │
-      ▼
-Email Delivery
-```
-
-### Automated Tasks
-
-* Fetch LeetCode statistics.
-* Store user performance data.
-* Generate AI-powered reports.
-* Compare historical progress.
-* Send weekly email summaries.
-
----
-
-# 🧩 Tech Stack
+# 🛠️ Tech Stack
 
 ## Frontend
 
-* Next.js (App Router)
+* Next.js
+* React
 * TypeScript
 * Tailwind CSS
-* React
 
 ## Backend
 
@@ -193,22 +326,9 @@ Email Delivery
 
 * n8n
 
-## Authentication
+## Data Source
 
-* Custom Signup/Login System
-* Session-Based Authentication
-
----
-
-# 🎯 Engineering Highlights
-
-* Developed a LangGraph-based Multi-Agent AI mentorship system.
-* Implemented graph-based workflow orchestration with shared state management.
-* Built intelligent routing using a Supervisor Agent and conditional edges.
-* Designed personalized DSA revision and interview coaching agents.
-* Integrated FastAPI APIs for real-time AI interactions.
-* Automated user performance analysis and email reporting using n8n.
-* Created a scalable and modular Agentic AI architecture.
+* LeetCode GraphQL API
 
 ---
 
@@ -216,75 +336,35 @@ Email Delivery
 
 ### Step 1
 
-User creates an account and logs in.
+User creates an account.
 
 ### Step 2
 
-User connects their LeetCode profile.
+User submits their LeetCode username.
 
 ### Step 3
 
-LeetCode activity and statistics are collected.
+LeetCode statistics are fetched and stored.
 
 ### Step 4
 
-The AI Mentor fetches relevant performance data.
+n8n automatically runs scheduled analysis.
 
 ### Step 5
 
-Supervisor Agent identifies user intent.
+AI generates weekly reports and revision plans.
 
 ### Step 6
 
-Request is routed to either:
-
-* Interview Agent
-* Revision Agent
+LeetX accesses stored user context.
 
 ### Step 7
 
-AI generates personalized mentorship and recommendations.
+Users ask interview or revision questions.
 
 ### Step 8
 
-Weekly reports are generated and delivered automatically.
-
----
-
-# 📂 Project Components
-
-```text
-Frontend (Next.js)
-│
-├── Authentication
-├── Dashboard
-├── Analytics
-└── AI Chat Interface
-
-Backend (FastAPI)
-│
-├── LangGraph Workflow
-├── Database Services
-├── API Endpoints
-└── AI Agents
-
-Automation (n8n)
-│
-├── Data Collection
-├── Report Generation
-└── Email Delivery
-```
-
----
-
-# 🔮 Future Enhancements
-
-* Voice-Based Mock Interviews
-* Contest Performance Analytics
-* Company-Specific Interview Preparation
-* AI-Powered Progress Forecasting
-* Advanced Skill Gap Analysis
-* Personalized Placement Roadmaps
+LeetX provides personalized responses based on actual coding performance.
 
 ---
 
@@ -295,6 +375,10 @@ Automation (n8n)
 
 ---
 
+# 📄 License
 
+MIT License
 
-⭐ If you found this project useful, consider giving it a star on GitHub.
+---
+
+⭐ If you find this project useful, consider giving it a star on GitHub.
