@@ -25,7 +25,8 @@ export default function LoginClient() {
     }
   }, [searchParams]);
 
-  const handleSubmit = async (e) => {
+  // FIX: Added React.FormEvent to event parameter
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -41,7 +42,7 @@ export default function LoginClient() {
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (error) {
+    } catch (error: any) { // FIX: Typed error as 'any'
       setError(error.response?.data?.message || "Authentication failed. Invalid credentials.");
     } finally {
       setLoading(false);

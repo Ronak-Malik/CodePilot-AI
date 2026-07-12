@@ -3,12 +3,32 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+// 1. Tell TypeScript exactly what data to expect
+interface LeetCodeStats {
+  easy?: number;
+  medium?: number;
+  hard?: number;
+  totalSolved?: number;
+  streak?: number;
+  ranking?: string | number;
+  recentProblems?: Array<{
+    title: string;
+    solvedAt: string | number | Date;
+    difficulty: string;
+  }>;
+}
+
+interface User {
+  name?: string;
+  leetcodeUsername?: string;
+}
+
 export default function Dashboard() {
   const router = useRouter();
   
-  // FIX: Initialize with empty objects instead of null to prevent 'never' type errors
-  const [stats, setStats] = useState({});
-  const [user, setUser] = useState({});
+  // 2. Apply the types to your state
+  const [stats, setStats] = useState<LeetCodeStats | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -138,7 +158,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Clean KPI Numbers (No Boxes) */}
+        {/* Clean KPI Numbers */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-12 py-10 border-y border-[#1a2e25]/10">
             <div>
                 <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#1a2e25]/50 mb-2 font-mono">
@@ -172,7 +192,6 @@ export default function Dashboard() {
             </h2>
             
             <div className="flex flex-col sm:flex-row items-center gap-10">
-                {/* Clean SVG Radial Chart */}
                 <div className="relative flex items-center justify-center shrink-0">
                     <svg className="w-32 h-32 transform -rotate-90">
                         <circle cx="64" cy="64" r={radius} stroke="#1a2e25" strokeOpacity="0.05" strokeWidth="6" fill="transparent" />
@@ -192,7 +211,6 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Clean Progress Bars */}
                 <div className="flex-1 w-full space-y-5 font-mono">
                     {[
                         { label: "EASY", val: safeStats.easy, color: "bg-emerald-500", pct: (safeStats.easy/Math.max(safeStats.total, 1))*100 },
@@ -220,7 +238,7 @@ export default function Dashboard() {
             </h2>
             
             <div className="flex-1 flex flex-col">
-              {stats?.recentProblems?.length > 0 ? (
+              {stats?.recentProblems && stats.recentProblems.length > 0 ? (
                 <div className="space-y-1">
                   {stats.recentProblems.slice(0, 5).map((p, i) => (
                     <div key={i} className="flex items-center justify-between py-3 border-b border-[#1a2e25]/5 hover:bg-[#1a2e25]/5 transition-colors px-2 rounded-md">

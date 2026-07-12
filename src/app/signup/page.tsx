@@ -17,9 +17,13 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
+  
+  // FIX 1: Tell Vercel this is an object that holds string keys and string values
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  
+  // FIX 2: Explicitly define the allowed statuses
   const [debouncedUsername, setDebouncedUsername] = useState("");
-  const [usernameStatus, setUsernameStatus] = useState("idle");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -47,14 +51,15 @@ export default function SignupPage() {
     checkUsername();
   }, [debouncedUsername]);
 
-  const handleChange = (e) => {
+  // FIX 3: Add React type for the input event
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
-    const errors = {};
+    const errors: Record<string, string> = {};
     if (!formData.email) errors.email = "Required";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Invalid";
     if (formData.password.length < 6) errors.password = "Min 6 chars";
@@ -64,14 +69,15 @@ export default function SignupPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  // FIX 4: Add React type for the form submission event
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
     try {
       const response = await axios.post("/api/auth/signup", formData);
       if (response.data.success) router.push("/login?registered=true");
-    } catch (err) {
+    } catch (err: any) { // FIX 5: Explicitly type err as any to read err.response safely
       setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);

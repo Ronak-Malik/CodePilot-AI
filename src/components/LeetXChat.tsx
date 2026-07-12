@@ -4,15 +4,25 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Markdown from "react-markdown";
 
-export default function LeetXChat({ user }) {
+// FIX: Added interface for expected message state
+interface ChatMessage {
+  role: string;
+  content: string;
+}
+
+// FIX: Added basic type for the passed 'user' prop
+export default function LeetXChat({ user }: { user: any }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
+  
+  // FIX: Type the messages array so it's not assumed to be 'never[]'
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   
-  const messagesEndRef = useRef(null);
-  const textareaRef = useRef(null);
+  // FIX: Added HTML element types to refs
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -21,8 +31,8 @@ export default function LeetXChat({ user }) {
     }
   }, [messages, loading, isOpen]);
 
-  // Auto-resize textarea like Gemini
-  const handleInput = (e) => {
+  // Auto-resize textarea like Gemini - FIX: Added ChangeEvent type
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -69,7 +79,7 @@ export default function LeetXChat({ user }) {
           { role: "bot", content: response.data.response },
         ]);
       }
-    } catch (error) {
+    } catch (error: any) { // FIX: typed catch error
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: "⚠️ **System Offline.** Cannot connect to the logic core." },
@@ -197,7 +207,8 @@ export default function LeetXChat({ user }) {
                   ref={textareaRef}
                   value={input}
                   onChange={handleInput}
-                  onKeyDown={(e) => {
+                  // FIX: Typed the KeyDown event
+                  onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       handleSendMessage();
