@@ -21,11 +21,11 @@ export default function LoginClient() {
 
   useEffect(() => {
     if (searchParams.get("registered") === "true") {
-      setSuccessMessage("Account created successfully! Please login.");
+      setSuccessMessage("Workspace created successfully. Awaiting authentication.");
     }
   }, [searchParams]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -41,103 +41,97 @@ export default function LoginClient() {
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Login failed. Please try again.");
+    } catch (error) {
+      setError(error.response?.data?.message || "Authentication failed. Invalid credentials.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020203] text-zinc-100 flex items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#f4f1e1] text-[#1a2e25] flex flex-col pt-20 px-6 sm:px-12 font-sans selection:bg-[#d9531e] selection:text-white bg-[linear-gradient(to_right,#1a2e2511_1px,transparent_1px),linear-gradient(to_bottom,#1a2e2511_1px,transparent_1px)] bg-[size:4rem_4rem]">
       
-     
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[600px] bg-indigo-600/10 blur-[140px] rounded-full pointer-events-none animate-pulse" />
-
-      <div className="max-w-md w-full z-10 transition-all duration-700">
+      <div className="max-w-2xl w-full mx-auto z-10">
         
-        
-        <div className="text-center mb-8 transform hover:scale-110 transition-transform duration-500 cursor-default">
-          <h1 className="text-3xl font-black tracking-tighter  mb-2 text-white">LeetOtracker</h1>
-          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.3em]">Access Your Pipeline</p>
+        {/* Header */}
+        <div className="mb-16 cursor-default">
+          <p className="text-[#d9531e] text-xs font-bold uppercase tracking-[0.3em] font-mono mb-4">
+            Track your journey
+          </p>
+          <h1 className="text-5xl sm:text-7xl font-serif font-black tracking-tighter  text-[#1a2e25] leading-[0.85]">
+            Login to <br/>your Account
+          </h1>
         </div>
 
-        <div className="bg-zinc-900/40 border border-white/10 backdrop-blur-2xl p-8 rounded-[2.5rem] shadow-2xl hover:scale-[1.02] hover:border-indigo-500/30 transition-all duration-500">
+        {/* Form without Card */}
+        <form className="space-y-10" onSubmit={handleSubmit}>
           
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {successMessage && (
-              <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-xl text-[10px] font-black uppercase text-center">
-                {successMessage}
-              </div>
-            )}
-
-            {error && (
-              <div className="bg-red-500/20 border border-red-500/50 text-red-300 p-3 rounded-xl text-[10px] font-black uppercase text-center animate-bounce">
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-5">
-              {/* Email Address */}
-              <div className="group transition-all">
-                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400 transition-colors">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700"
-                  placeholder="name@example.com"
-                  required
-                />
-              </div>
-
-              {/* Password */}
-              <div className="group transition-all">
-                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-300 ml-1 mb-1 block group-hover:text-indigo-400 transition-colors">
-                  Secret Key
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500/50 focus:scale-[1.01] outline-none transition-all placeholder:text-zinc-700 pr-11"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
-                  >
-                    {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
+          {successMessage && (
+            <div className="bg-[#1a2e25] text-[#f4f1e1] border-l-8 border-[#1a2e25] p-4 text-xs font-black uppercase font-mono">
+              [Success] {successMessage}
             </div>
+          )}
 
-            {/* REACTIVE LOGIN BUTTON */}
+          {error && (
+            <div className="bg-[#1a2e25] text-[#d9531e] border-l-8 border-[#d9531e] p-4 text-xs font-black uppercase font-mono">
+              [Error] {error}
+            </div>
+          )}
+
+          {/* Email Address */}
+          <div className="relative group">
+            <label className="text-xs font-bold uppercase tracking-widest text-[#1a2e25]/50 block font-mono transition-colors group-focus-within:text-[#d9531e]">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full bg-transparent border-b-4 border-[#1a2e25] py-3 text-2xl sm:text-3xl font-black text-[#1a2e25] placeholder:text-[#1a2e25]/10 focus:border-[#d9531e] outline-none transition-colors"
+              placeholder="developer@gmail.com"
+              required
+            />
+          </div>
+
+          {/* Password */}
+          <div className="relative group">
+            <label className="text-xs font-bold uppercase tracking-widest text-[#1a2e25]/50 block font-mono transition-colors group-focus-within:text-[#d9531e]">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full bg-transparent border-b-4 border-[#1a2e25] py-3 text-2xl sm:text-3xl font-black text-[#1a2e25] placeholder:text-[#1a2e25]/10 focus:border-[#d9531e] outline-none transition-colors"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-[#1a2e25] hover:text-[#d9531e] transition-colors p-2"
+              >
+                {showPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-[0.25em] hover:scale-[1.03] active:scale-95 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all duration-300 disabled:opacity-50"
+              className="w-full sm:w-auto bg-[#1a2e25] text-[#f4f1e1] px-12 py-5 text-sm font-bold uppercase tracking-[0.2em] font-mono shadow-[6px_6px_0px_0px_#d9531e] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[3px_3px_0px_0px_#d9531e] transition-all disabled:opacity-50 disabled:pointer-events-none"
             >
-              {loading ? "Authorizing..." : "Initiate Session"}
+              {loading ? "Authorizing..." : "Login →"}
             </button>
-          </form>
 
-          {/* LIGHTER FOOTER TEXT */}
-          <div className="mt-8 text-center pt-6 border-t border-white/5">
-            <p className="text-xs text-zinc-400 font-bold uppercase tracking-tight">
-              New to the system?{" "}
-              <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 hover:underline transition ml-1 underline-offset-4">
-                Sign up here
-              </Link>
-            </p>
+            <Link href="/signup" className="text-xs text-[#1a2e25] font-bold tracking-widest font-mono hover:text-[#d9531e] transition-colors underline decoration-2 underline-offset-4">
+              Create a new account?
+            </Link>
           </div>
-        </div>
+        </form>
+
       </div>
     </div>
   );

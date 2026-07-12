@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [stats, setStats] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [stats, setStats] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -54,8 +54,8 @@ export default function Dashboard() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#020203]">
-      <div className="h-5 w-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(79,70,229,0.5)]" />
+    <div className="min-h-screen flex items-center justify-center bg-[#f4f1e1]">
+      <div className="h-8 w-8 border-4 border-[#1a2e25]/20 border-t-[#d9531e] rounded-full animate-spin" />
     </div>
   );
 
@@ -68,116 +68,141 @@ export default function Dashboard() {
     rank: stats?.ranking ?? "0"
   };
 
-  const radius = 70;
+  // SVG calculations
+  const radius = 50;
   const circumference = 2 * Math.PI * radius;
-  const progress = Math.min((safeStats.total / 500) * 100, 100); 
+  const progress = Math.min((Math.max(safeStats.total, 1) / 500) * 100, 100); 
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="min-h-screen bg-[#020203] text-zinc-100 font-sans selection:bg-indigo-500/30 pb-10 overflow-x-hidden">
+    <div className="min-h-screen bg-[#f4f1e1] text-[#1a2e25] font-sans selection:bg-[#d9531e] selection:text-white pb-16 bg-[linear-gradient(to_right,#1a2e2508_1px,transparent_1px),linear-gradient(to_bottom,#1a2e2508_1px,transparent_1px)] bg-[size:3rem_3rem]">
       
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full opacity-50" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[100px] rounded-full opacity-30" />
-      </div>
-
-      <nav className="sticky top-0 z-[100] border-b border-white/5 bg-black/40 backdrop-blur-2xl">
+      {/* Minimal Navbar */}
+      <nav className="sticky top-0 z-[100] border-b border-[#1a2e25]/10 bg-[#f4f1e1]/80 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(79,70,229,0.8)]" />
-            <span className="font-black text-[10px] tracking-[0.3em] uppercase">LeetOtracker</span>
+            <div className="w-2 h-2 bg-[#d9531e] rounded-full animate-pulse" />
+            <span className="font-black text-[10px] sm:text-xs tracking-widest uppercase font-mono text-[#1a2e25]">LeetOtracker</span>
           </div>
           <div className="flex items-center gap-6">
-             <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{user?.name}</span>
+             <span className="text-[10px] font-bold text-[#1a2e25]/60 uppercase tracking-widest font-mono hidden sm:block">
+               {user?.name}
+             </span>
              <button 
                 onClick={() => { setLoggingOut(true); axios.post("/api/auth/logout").then(() => window.location.href = "/"); }}
-                className="text-[9px] font-black text-red-500 hover:text-red-400 transition-all uppercase tracking-widest"
+                className="text-[10px] font-bold text-[#1a2e25] hover:text-[#d9531e] transition-colors uppercase tracking-widest font-mono"
              >
-                {loggingOut ? "TERMINATING..." : "LOGOUT"}
+                {loggingOut ? "Logging out..." : "Logout"}
              </button>
           </div>
         </div>
       </nav>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-10">
+      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-10 sm:pt-16">
         
-        <div className="mb-12">
-            <h1 className="text-6xl font-black tracking-tighter uppercase leading-none mb-2">
-              DEVELOPER<br /><span className="text-zinc-600">Panel</span>
-            </h1>
-            <div className="flex justify-between items-center">
-                <p className="text-zinc-500 text-[11px] font-medium uppercase tracking-widest">Hello, {user?.name}Your weekly AI report awaits in your inbox.</p>
-                <button 
-                    onClick={handleSync}
-                    disabled={syncing}
-                    className="group flex items-center gap-3 bg-white text-black px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_10px_20px_rgba(255,255,255,0.1)] disabled:opacity-50"
-                >
-                    <svg className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    {syncing ? "SYNCING..." : "SYNC LEETCODE"}
-                </button>
+        {/* Header & Notification (Cardless) */}
+        <div className="mb-10 sm:mb-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+              <p className="text-[#1a2e25]/50 text-[10px] font-bold uppercase tracking-[0.3em] font-mono mb-2">
+                Performance Dashboard
+              </p>
+              <h1 className="text-4xl sm:text-6xl font-serif font-black tracking-tighter uppercase leading-[0.85]">
+                Workspace.
+              </h1>
+            </div>
+            
+            <button 
+                onClick={handleSync}
+                disabled={syncing}
+                className="group flex items-center justify-center gap-2 bg-[#1a2e25] text-[#f4f1e1] px-6 py-3.5 font-bold text-[10px] uppercase tracking-widest hover:bg-[#d9531e] transition-colors disabled:opacity-50 font-mono w-full md:w-auto"
+            >
+                <svg className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {syncing ? "Syncing..." : "Sync Leetcode"}
+            </button>
+          </div>
+
+          {/* Clean Inline Notification */}
+          <div className="flex items-start gap-4 border-l-2 border-[#d9531e] pl-4 max-w-2xl py-1">
+            <svg className="w-5 h-5 text-[#d9531e] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm text-[#1a2e25]/80 leading-relaxed font-medium">
+              Your diagnostic insights are sent to your inbox weekly. You can evaluate your performance and conduct mock interviews anytime using our context-aware <strong>LeetX Agent</strong>.
+            </p>
+          </div>
+        </div>
+
+        {/* Clean KPI Numbers (No Boxes) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-12 py-10 border-y border-[#1a2e25]/10">
+            <div>
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#1a2e25]/50 mb-2 font-mono">
+                    Current Streak
+                </p>
+                <p className="text-4xl sm:text-5xl font-black font-serif text-[#d9531e]">{safeStats.streak}</p>
+            </div>
+
+            <div>
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#1a2e25]/50 mb-2 font-mono">
+                    Global Rank
+                </p>
+                <p className="text-3xl sm:text-4xl font-black font-serif text-[#1a2e25] mt-1">#{safeStats.rank}</p>
+            </div>
+
+            <div className="col-span-2 sm:col-span-1">
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#1a2e25]/50 mb-2 font-mono">
+                    Total Solved
+                </p>
+                <p className="text-4xl sm:text-5xl font-black font-serif text-[#1a2e25]">{safeStats.total}</p>
             </div>
         </div>
 
-        {/* STATS CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div className="p-8 rounded-3xl bg-zinc-900/30 border border-white/5 backdrop-blur-md">
-                <div className="flex justify-between items-center mb-6 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500">
-                    <span>CURRENT STREAK</span>
-                    <span>🔥</span>
-                </div>
-                <div className="text-5xl font-black text-[#FF8C00]">{safeStats.streak}</div>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-zinc-900/30 border border-white/5 backdrop-blur-md">
-                <div className="flex justify-between items-center mb-6 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500">
-                    <span>GLOBAL RANK</span>
-                    <span>🏆</span>
-                </div>
-                <div className="text-4xl font-black text-[#5568FF]">#{safeStats.rank}</div>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-zinc-900/30 border border-white/5 backdrop-blur-md">
-                <div className="flex justify-between items-center mb-6 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500">
-                    <span>TOTAL SOLVED</span>
-                    <span>🎯</span>
-                </div>
-                <div className="text-5xl font-black text-[#00F5A0]">{safeStats.total}</div>
-            </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+        {/* 2-Column Minimal Data Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-20 pt-12">
           
-          {/* LEFT: RING & BREAKDOWN */}
-          <div className="md:col-span-3 p-10 rounded-[2.5rem] bg-zinc-900/20 border border-white/5 backdrop-blur-md">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-10">LOGIC BREAKDOWN</h3>
-            <div className="flex flex-col md:flex-row items-center gap-12 w-full">
-                <div className="relative flex items-center justify-center">
-                    <svg className="w-48 h-48 transform -rotate-90">
-                        <circle cx="96" cy="96" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" className="text-zinc-800" />
-                        <circle cx="96" cy="96" r={radius} stroke="url(#gradient)" strokeWidth="12" fill="transparent" strokeDasharray={circumference} style={{ strokeDashoffset: offset, transition: 'stroke-dashoffset 1.5s ease-out' }} strokeLinecap="round" />
-                        <defs><linearGradient id="gradient"><stop offset="0%" stopColor="#00F5A0" /><stop offset="100%" stopColor="#00D9F5" /></linearGradient></defs>
+          {/* Logic Breakdown Section */}
+          <div className="flex flex-col">
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#1a2e25] mb-8 font-mono border-b border-[#1a2e25]/10 pb-3">
+              Logic Breakdown
+            </h2>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-10">
+                {/* Clean SVG Radial Chart */}
+                <div className="relative flex items-center justify-center shrink-0">
+                    <svg className="w-32 h-32 transform -rotate-90">
+                        <circle cx="64" cy="64" r={radius} stroke="#1a2e25" strokeOpacity="0.05" strokeWidth="6" fill="transparent" />
+                        <circle 
+                          cx="64" cy="64" r={radius} 
+                          stroke="#d9531e" 
+                          strokeWidth="6" 
+                          fill="transparent" 
+                          strokeDasharray={circumference} 
+                          style={{ strokeDashoffset: offset, transition: 'stroke-dashoffset 1.5s ease-out' }} 
+                          strokeLinecap="round"
+                        />
                     </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-black text-white">{safeStats.total}</span>
-                        <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">TOTAL</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
+                        <span className="text-3xl font-serif font-black text-[#1a2e25]">{safeStats.total}</span>
+                        <span className="text-[9px] font-bold text-[#1a2e25]/50 uppercase tracking-widest font-mono">Solved</span>
                     </div>
                 </div>
 
-                <div className="flex-1 w-full space-y-6">
+                {/* Clean Progress Bars */}
+                <div className="flex-1 w-full space-y-5 font-mono">
                     {[
-                        { l: "EASY", v: safeStats.easy, c: "bg-emerald-500", p: (safeStats.easy/safeStats.total)*100 },
-                        { l: "MEDIUM", v: safeStats.medium, c: "bg-yellow-500", p: (safeStats.medium/safeStats.total)*100 },
-                        { l: "HARD", v: safeStats.hard, c: "bg-red-500", p: (safeStats.hard/safeStats.total)*100 },
+                        { label: "EASY", val: safeStats.easy, color: "bg-emerald-500", pct: (safeStats.easy/Math.max(safeStats.total, 1))*100 },
+                        { label: "MEDIUM", val: safeStats.medium, color: "bg-amber-500", pct: (safeStats.medium/Math.max(safeStats.total, 1))*100 },
+                        { label: "HARD", val: safeStats.hard, color: "bg-red-500", pct: (safeStats.hard/Math.max(safeStats.total, 1))*100 },
                     ].map((item, i) => (
                         <div key={i}>
-                            <div className="flex justify-between text-[10px] font-black mb-2 uppercase tracking-widest">
-                                <span className="text-zinc-500">{item.l}</span>
-                                <span className="text-white">{item.v}</span>
+                            <div className="flex justify-between text-[10px] font-bold mb-2 uppercase tracking-widest text-[#1a2e25]/70">
+                                <span>{item.label}</span>
+                                <span>{item.val}</span>
                             </div>
-                            <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                                <div className={`h-full ${item.c} rounded-full transition-all duration-700`} style={{ width: `${item.p || 0}%` }} />
+                            <div className="h-1.5 w-full bg-[#1a2e25]/5 rounded-full overflow-hidden">
+                                <div className={`h-full ${item.color} rounded-full transition-all duration-700`} style={{ width: `${item.pct || 0}%` }} />
                             </div>
                         </div>
                     ))}
@@ -185,24 +210,39 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* RIGHT: PROBLEM LIST */}
-          <div className="md:col-span-2 p-8 rounded-[2.5rem] bg-zinc-900/20 border border-white/5 backdrop-blur-md relative overflow-hidden group">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-8">RECENT ACTIVITY</h3>
-            <div className="space-y-4">
-              {stats?.recentProblems?.slice(0, 5).map((p: any, i: number) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-white/20 transition-all">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-bold tracking-tight text-zinc-200">{p.title}</span>
-                    <span className="text-[8px] text-zinc-600 font-black uppercase tracking-widest">
-                      {new Date(p.solvedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                    </span>
-                  </div>
-                  <div className={`w-2 h-2 rounded-full shadow-[0_0_10px] ${
-                    p.difficulty === 'Easy' ? 'bg-emerald-500 shadow-emerald-500/50' :
-                    p.difficulty === 'Medium' ? 'bg-yellow-500 shadow-yellow-500/50' : 'bg-red-500 shadow-red-500/50'
-                  }`} />
+          {/* Activity Log Section */}
+          <div className="flex flex-col">
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#1a2e25] mb-6 font-mono border-b border-[#1a2e25]/10 pb-3">
+              Activity Log
+            </h2>
+            
+            <div className="flex-1 flex flex-col">
+              {stats?.recentProblems?.length > 0 ? (
+                <div className="space-y-1">
+                  {stats.recentProblems.slice(0, 5).map((p, i) => (
+                    <div key={i} className="flex items-center justify-between py-3 border-b border-[#1a2e25]/5 hover:bg-[#1a2e25]/5 transition-colors px-2 rounded-md">
+                      <div className="flex flex-col gap-1 truncate pr-4">
+                        <span className="text-sm font-semibold tracking-tight text-[#1a2e25] truncate">{p.title}</span>
+                        <span className="text-[9px] text-[#1a2e25]/50 font-bold uppercase tracking-widest font-mono">
+                          {new Date(p.solvedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className={`text-[9px] font-bold uppercase tracking-widest font-mono shrink-0 ${
+                        p.difficulty === 'Easy' ? 'text-emerald-600' :
+                        p.difficulty === 'Medium' ? 'text-amber-600' : 'text-red-600'
+                      }`}>
+                        {p.difficulty}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )) || <div className="text-center py-20 text-[10px] text-zinc-700 uppercase tracking-widest font-black italic">No records found</div>}
+              ) : (
+                <div className="flex-1 flex items-center justify-center py-10">
+                  <p className="text-[10px] text-[#1a2e25]/40 uppercase tracking-widest font-bold font-mono text-center">
+                    No recent submissions<br/>detected.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

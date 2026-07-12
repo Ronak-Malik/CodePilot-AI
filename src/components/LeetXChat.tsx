@@ -4,30 +4,46 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Markdown from "react-markdown";
 
-export default function LeetXChat({ user }: { user: any }) {
+export default function LeetXChat({ user }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
 
+  // Auto-scroll to bottom
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, loading]);
+  }, [messages, loading, isOpen]);
+
+  // Auto-resize textarea like Gemini
+  const handleInput = (e) => {
+    setInput(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim() || loading || !user) return;
 
-    const userMessage = { role: "user", content: input };
+    const currentInput = input.trim();
+    const userMessage = { role: "user", content: currentInput };
+    
     setMessages((prev) => [...prev, userMessage]);
-    const currentInput = input;
     setInput("");
+    
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
+    
     setLoading(true);
 
     try {
@@ -56,132 +72,174 @@ export default function LeetXChat({ user }: { user: any }) {
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "**Logic Core Offline.** Ensure your FastAPI server is running." },
+        { role: "bot", content: "⚠️ **System Offline.** Cannot connect to the logic core." },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Close modal AND route to login
+  const handleAuthenticationRedirect = () => {
+    setIsOpen(false);
+    router.push("/login");
+  };
+
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 z-[2000] bg-black/95 backdrop-blur-xl flex flex-col animate-in fade-in duration-300">
-          
-          <div className="w-full h-20 border-b border-white/5 flex items-center justify-between px-8 md:px-20 shrink-0">
-            <div className="flex items-center gap-4">
-              <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_15px_#22d3ee]" />
-              <span className="font-black text-sm tracking-[0.3em] text-white">leX</span>
+        <div className="fixed inset-0 z-[2000] bg-[#f4f1e1] flex flex-col h-[100dvh] animate-in fade-in duration-200">
+
+          {/* Top Header (Fixed Height) */}
+          <div className="shrink-0 w-full h-14 border-b border-[#1a2e25]/10 flex items-center justify-between px-4 sm:px-6 bg-[#f4f1e1]/80 backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🤖</span>
+              <span className="font-bold text-sm text-[#1a2e25] font-mono tracking-wide">LeetX</span>
             </div>
-            <button 
+            <button
               onClick={() => setIsOpen(false)}
-              className="group flex items-center gap-2 text-zinc-500 hover:text-white transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#1a2e25]/10 text-[#1a2e25] transition-colors"
             >
-              <span className="hidden md:block text-red-600 font-bold text-xs uppercase tracking-widest hover:text-red-500 transition-colors">
-                Close Session
-              </span>
-              <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
-          <div className="flex-1 overflow-hidden flex flex-col items-center">
-            <div 
-              ref={scrollRef}
-              className="w-full max-w-4xl flex-1 overflow-y-auto px-6 py-12 space-y-10 scrollbar-hide"
-            >
+          {/* Scrollable Chat Area */}
+          <div className="flex-1 overflow-y-auto min-h-0 w-full px-4 sm:px-6 scroll-smooth">
+            <div className="max-w-3xl mx-auto py-8 sm:py-10 flex flex-col gap-8">
+              
+              {/* Empty State / Greeting */}
               {!user ? (
-                <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
-                  <div className="text-6xl mb-4">🔐</div>
-                  <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Authentication Required</h2>
-                  <p className="text-zinc-500 max-w-sm">Log in to sync your LeetCode problems with our mentor brain.</p>
-                  <button onClick={() => router.push("/login")} className="bg-white text-black px-10 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-cyan-400 transition-all">Authorize Now</button>
+                <div className="flex flex-col items-center justify-center pt-10 text-center">
+                  <h2 className="text-3xl font-serif text-[#1a2e25] mb-4">Authentication Required</h2>
+                  <p className="text-[#1a2e25]/60 mb-8 max-w-md">Please initialize your workspace to access the LeetX conversational agent.</p>
+                  <button 
+                    onClick={handleAuthenticationRedirect} 
+                    className="px-6 py-3 bg-[#1a2e25] text-white rounded-full font-mono text-xs uppercase tracking-widest hover:bg-[#d9531e] transition-colors"
+                  >
+                    Authenticate
+                  </button>
+                </div>
+              ) : messages.length === 0 ? (
+                <div className="flex flex-col pt-4 sm:pt-10 px-2">
+                  <h1 className="text-4xl sm:text-5xl font-serif font-medium text-[#1a2e25] mb-2">
+                    Hello, {user.name?.split(' ')[0] || user.leetcodeUsername}
+                  </h1>
+                  <p className="text-2xl sm:text-3xl font-serif text-[#1a2e25]/40">
+                    How can I help you optimize today?
+                  </p>
                 </div>
               ) : (
-                <>
-                  {messages.length === 0 && (
-                    <div className="text-center py-20 animate-in zoom-in-95 duration-700">
-                      <div className="w-20 h-20 bg-indigo-600 rounded-[2rem] mx-auto mb-8 flex items-center justify-center text-4xl shadow-[0_0_50px_rgba(79,70,229,0.3)]">🤖</div>
-                      <h1 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter">
-                        Hello, {user.leetcodeUsername}!
-                      </h1>
-                      <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-lg mx-auto">
-                        Do you want a perfect revision plan or a mock interview to level up today?
-                      </p>
-                    </div>
-                  )}
-
-                  {messages.map((m, i) => (
-                    <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} w-full`}>
-                      <div className={`max-w-[85%] md:max-w-[75%] p-8 rounded-[2.5rem] text-[16px] leading-relaxed transition-all ${
-                          m.role === "user" 
-                            ? "bg-zinc-900 text-white rounded-tr-none border border-white/10" 
-                            : "bg-indigo-600/10 text-zinc-100 rounded-tl-none border border-indigo-500/20 shadow-2xl shadow-indigo-500/5"
-                        }`}
-                      >
-                        <div className="prose prose-invert prose-p:leading-relaxed prose-strong:text-cyan-400 prose-code:text-indigo-300 max-w-none">
-                          <Markdown>{m.content}</Markdown>
+                /* Message Feed */
+                messages.map((m, i) => (
+                  <div key={i} className="flex gap-4 w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    
+                    {/* Avatar */}
+                    <div className="shrink-0 mt-1">
+                      {m.role === "user" ? (
+                        <div className="w-8 h-8 rounded-full bg-[#1a2e25] text-[#f4f1e1] flex items-center justify-center text-xs font-bold font-mono uppercase">
+                          {user.leetcodeUsername?.charAt(0) || "U"}
                         </div>
+                      ) : (
+                        <div className="w-8 h-8 rounded-full border border-[#1a2e25]/20 bg-white flex items-center justify-center text-lg">
+                          🤖
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-xs text-[#1a2e25] mb-1 font-mono">
+                        {m.role === "user" ? "You" : "LeetX"}
+                      </div>
+                      <div className={`prose prose-sm sm:prose-base max-w-none text-[#1a2e25] leading-relaxed 
+                        ${m.role === "bot" ? "prose-p:leading-7 prose-pre:bg-[#1a2e25] prose-pre:text-[#f4f1e1] prose-pre:rounded-xl prose-code:text-[#d9531e] prose-strong:font-bold" : "prose-p:leading-6"}`}>
+                        <Markdown>{m.content}</Markdown>
                       </div>
                     </div>
-                  ))}
-
-                  {loading && (
-                    <div className="flex gap-2 items-center text-zinc-600">
-                      <div className="w-2 h-2 bg-zinc-600 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                      <div className="w-2 h-2 bg-zinc-600 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                      <div className="w-2 h-2 bg-zinc-600 rounded-full animate-bounce" />
-                    </div>
-                  )}
-                </>
+                  </div>
+                ))
               )}
-            </div>
 
-            <div className="w-full max-w-4xl p-6 md:pb-12 shrink-0">
-              <div className="relative bg-zinc-900 border border-white/10 rounded-[3rem] p-2 flex items-center shadow-2xl focus-within:border-indigo-500 transition-all">
-                <input 
+              {/* Loading State */}
+              {loading && (
+                <div className="flex gap-4 w-full animate-in fade-in">
+                  <div className="shrink-0 mt-1">
+                    <div className="w-8 h-8 rounded-full border border-[#1a2e25]/20 bg-white flex items-center justify-center text-lg">
+                      🤖
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-xs text-[#1a2e25] mb-2 font-mono">LeetX</div>
+                    <div className="flex gap-1.5 items-center h-6">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#1a2e25]/40 animate-bounce" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#1a2e25]/40 animate-bounce [animation-delay:-0.2s]" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#1a2e25]/40 animate-bounce [animation-delay:-0.4s]" />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Invisible element to scroll to */}
+              <div ref={messagesEndRef} className="h-1" />
+            </div>
+          </div>
+
+          {/* Input Container (Fixed at Bottom) */}
+          <div className="shrink-0 w-full bg-gradient-to-t from-[#f4f1e1] via-[#f4f1e1] to-transparent pt-4 pb-4 sm:pb-8 px-4 sm:px-6">
+            <div className="max-w-3xl mx-auto relative">
+              
+              <div className="relative flex items-end w-full bg-white rounded-3xl border border-[#1a2e25]/20 shadow-[0_4px_20px_-10px_rgba(26,46,37,0.1)] focus-within:shadow-[0_4px_25px_-5px_rgba(26,46,37,0.15)] focus-within:border-[#1a2e25]/40 transition-all duration-300">
+                
+                <textarea
+                  ref={textareaRef}
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                  placeholder="Ask leX about a revision plan or interview..."
-                  className="flex-1 bg-transparent border-none px-8 py-5 text-lg text-white placeholder:text-zinc-700 focus:outline-none"
+                  onChange={handleInput}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Ask LeetX..."
+                  className="flex-1 max-h-[200px] w-full bg-transparent resize-none outline-none py-4 pl-6 pr-14 text-sm sm:text-base text-[#1a2e25] placeholder:text-[#1a2e25]/40"
+                  rows={1}
                 />
-                <button 
+
+                {/* Send Button */}
+                <button
                   onClick={handleSendMessage}
                   disabled={loading || !input.trim()}
-                  className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center hover:bg-cyan-400 transition-all disabled:opacity-20 active:scale-90 mr-1"
+                  className="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center rounded-full bg-[#1a2e25] text-white hover:bg-[#d9531e] disabled:bg-[#1a2e25]/10 disabled:text-[#1a2e25]/40 transition-colors"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                  <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19V5m0 0l-6 6m6-6l6 6" />
                   </svg>
                 </button>
               </div>
-              <p className="text-center text-[10px] text-zinc-700 mt-4 uppercase tracking-[0.3em]">Precision Engineering for good Placement Goals</p>
+              
+              <p className="text-center text-[10px] text-[#1a2e25]/50 mt-3 font-mono">
+                LeetX can make mistakes. Consider verifying important logic.
+              </p>
             </div>
           </div>
+
         </div>
       )}
 
-    
-      <div className="fixed bottom-10 right-10 z-[1000]">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="group flex items-center px-8 py-5 bg-[#0a0a0c] rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/5 to-transparent shadow-[0_0_40px_rgba(34,211,238,0.3)] transition-all duration-500 scale-125 hover:shadow-[0_0_60px_rgba(34,211,238,0.5)]"
-        >
-          <div className="relative w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border-2 border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-            <span className="text-2xl">🤖</span>
-            
-            <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-cyan-400 rounded-full border-2 border-[#0a0a0c] shadow-[0_0_10px_#22d3ee] animate-pulse" />
-          </div>
-          <div className="flex flex-col items-start pr-4 ml-5 text-left">
-            <span className="text-[12px] font-bold text-zinc-400 leading-none mb-1 tracking-tighter uppercase">Chat with</span>
-            <span className="text-xl font-black text-cyan-400 tracking-tight leading-none ">LeX</span>
-          </div>
-        </button>
-      </div>
+      {/* Floating Circular Toggle Button */}
+      {!isOpen && (
+        <div className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[1000]">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="group flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white border border-[#1a2e25]/20 shadow-[0_8px_30px_rgba(26,46,37,0.12)] hover:shadow-[0_8px_35px_rgba(217,83,30,0.2)] hover:border-[#d9531e]/30 hover:-translate-y-1 transition-all duration-300 relative"
+          >
+            <span className="text-2xl sm:text-3xl transition-transform duration-300 group-hover:scale-110">🤖</span>
+          </button>
+        </div>
+      )}
     </>
   );
 }
