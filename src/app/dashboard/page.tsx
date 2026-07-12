@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [stats, setStats] = useState(null);
-  const [user, setUser] = useState(null);
+  
+  // FIX: Initialize with empty objects instead of null to prevent 'never' type errors
+  const [stats, setStats] = useState({});
+  const [user, setUser] = useState({});
+  
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
